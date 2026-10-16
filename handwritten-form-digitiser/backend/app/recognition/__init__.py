@@ -1,1 +1,1 @@
-"""Indic-script character and word recognition models and inference."""
+﻿"""Package marker for the recognition module."""

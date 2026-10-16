@@ -239,14 +239,102 @@ Allows a human reviewer to correct any machine-extracted field value.
 
 ---
 
-### 2.4 Data Export
+---
 
-#### `GET /api/v1/forms/{form_id}/export?format={json|csv}`
-Exports the finalized digitized form record.
+### 2.5 OCR Recognition & Engine Discovery (Phase 04)
 
-- **Query Parameters:**
-  - `format` (string, optional, default: `"json"`): Export format (`"json"` or `"csv"`).
+#### `GET /api/v1/recognize/engines`
+Returns all registered OCR engines and their real-time availability status (checks system binaries and weights without loading full models).
 
-- **Response `200 OK`:**
-  - If `json`: Returns formatted JSON payload.
-  - If `csv`: Returns `text/csv` attachment with headers `form_id,applicant_name,submission_date,declared_amount,status,verified`.
+- **Response `200 OK`**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "engine_id": "mock",
+      "display_name": "Mock OCR Adapter (Test Only)",
+      "supported_scripts": ["Devanagari", "Latin"],
+      "is_available": true,
+      "requires_gpu": false,
+      "version": "1.0.0"
+    },
+    {
+      "engine_id": "tesseract",
+      "display_name": "Tesseract 5 (Hindi/Devanagari — printed baseline)",
+      "supported_scripts": ["Devanagari"],
+      "is_available": false,
+      "requires_gpu": false,
+      "version": null
+    },
+    {
+      "engine_id": "crnn",
+      "display_name": "CRNN-CTC (Handwritten Devanagari)",
+      "supported_scripts": ["Devanagari"],
+      "is_available": false,
+      "requires_gpu": false,
+      "version": null
+    }
+  ],
+  "timestamp": "2026-10-16T16:20:00Z"
+}
+```
+
+#### `POST /api/v1/recognize`
+Accepts a form image upload, preprocesses, segments field crops according to the template, runs the selected OCR engine across each field crop, and returns structured per-field predictions.
+
+- **Content-Type:** `multipart/form-data`
+- **Form Parameters:**
+  - `file` (binary, required): Image file (PNG, JPG, JPEG; max limit configured in settings).
+  - `template_id` (string, optional, default: `"devanagari_synthetic_v1"`): Template ID for layout matching.
+  - `engine_id` (string, optional, default: `"tesseract"`): OCR engine (`"tesseract"`, `"crnn"`, or `"mock"`).
+  - `strategy` (string, optional, default: `"hybrid"`): Segmentation strategy (`"hybrid"`, `"fixed"`, or `"contour"`).
+
+- **Response `200 OK`**:
+```json
+{
+  "success": true,
+  "data": {
+    "template_id": "devanagari_synthetic_v1",
+    "engine_id": "mock",
+    "total_inference_time_ms": 1.25,
+    "fields": {
+      "applicant_name": {
+        "field_id": "applicant_name",
+        "field_type": "NAME",
+        "text": "राकेश कुमार",
+        "confidence": 0.5,
+        "is_confidence_calibrated": false,
+        "status": "SUCCESS",
+        "engine_id": "mock",
+        "inference_time_ms": 0.42,
+        "warnings": ["MOCK ADAPTER: output is synthetic; not from a real OCR model."]
+      },
+      "submission_date": {
+        "field_id": "submission_date",
+        "field_type": "DATE",
+        "text": "01/01/2024",
+        "confidence": 0.5,
+        "is_confidence_calibrated": false,
+        "status": "SUCCESS",
+        "engine_id": "mock",
+        "inference_time_ms": 0.41,
+        "warnings": ["MOCK ADAPTER: output is synthetic; not from a real OCR model."]
+      },
+      "declared_amount": {
+        "field_id": "declared_amount",
+        "field_type": "AMOUNT",
+        "text": "0.00",
+        "confidence": 0.5,
+        "is_confidence_calibrated": false,
+        "status": "SUCCESS",
+        "engine_id": "mock",
+        "inference_time_ms": 0.42,
+        "warnings": ["MOCK ADAPTER: output is synthetic; not from a real OCR model."]
+      }
+    },
+    "warnings": []
+  },
+  "timestamp": "2026-10-16T16:20:00Z"
+}
+```

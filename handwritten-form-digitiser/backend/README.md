@@ -86,12 +86,16 @@ Run pytest with verbose output:
 # Run the entire test suite
 python -m pytest tests/ -v
 
-# Run a specific test module
-python -m pytest tests/test_health.py -v
-python -m pytest tests/test_errors.py -v
-python -m pytest tests/test_config.py -v
-python -m pytest tests/test_cors.py -v
-python -m pytest tests/test_docs.py -v
+# Run OCR and benchmark tests
+python -m pytest tests/test_recognition.py -v
+
+# Run live verification scripts (spawns background uvicorn test instances)
+python scripts/verify_preprocess.py
+python scripts/verify_segmentation.py
+python scripts/verify_recognition.py
+
+# Run benchmark evaluation CLI
+python scripts/run_benchmarks.py --engine tesseract
 ```
 
 ---
@@ -102,34 +106,46 @@ python -m pytest tests/test_docs.py -v
 backend/
 ├── app/
 │   ├── api/
-│   │   ├── __init__.py
-│   │   └── health.py          # GET /api/health and GET /api/v1/health
+│   │   ├── health.py          # GET /api/health and GET /api/v1/health
+│   │   ├── preprocessing.py   # POST /api/preprocess
+│   │   ├── segmentation.py    # POST /api/segment, GET /api/templates
+│   │   └── recognition.py     # POST /api/recognize, GET /api/recognize/engines
 │   ├── core/
-│   │   ├── __init__.py
 │   │   ├── config.py          # Pydantic Settings & environment validation
 │   │   ├── errors.py          # Domain exceptions & centralized error handlers
 │   │   └── logging.py         # Structured logging & PII/buffer redaction filter
 │   ├── schemas/
-│   │   ├── __init__.py
 │   │   ├── common.py          # Success and Error response envelopes
-│   │   └── health.py          # Health check response schemas
+│   │   ├── health.py          # Health check response schemas
+│   │   ├── preprocessing.py   # Image upload & preprocessing schemas
+│   │   ├── segmentation.py    # Field detection & layout schemas
+│   │   └── recognition.py     # OCR results & capability schemas
 │   ├── main.py                # create_app() application factory & ASGI app
-│   ├── evaluation/            # Phase 09 metrics (CER, WER)
-│   ├── pipeline/              # Phase 06/07 pipeline orchestrator
-│   ├── preprocessing/         # Phase 03 OpenCV deskew & binarization
-│   ├── recognition/           # Phase 05 Devanagari OCR inference
-│   ├── segmentation/          # Phase 04 Layout analysis & ROI slicing
-│   └── validation/            # Phase 06 Hindi numeral & date rules
-├── data/                      # Sample forms, annotations, and processed outputs
-├── scripts/                   # Utility and benchmarking scripts
+│   ├── evaluation/            # CER, WER, and exact match benchmark metrics
+│   ├── pipeline/              # Future pipeline orchestrator
+│   ├── preprocessing/         # OpenCV deskew, CLAHE, bilateral filter
+│   ├── recognition/           # OCR engine adapters (Mock, Tesseract, CRNN)
+│   ├── segmentation/          # TemplateManager & layout strategies
+│   └── validation/            # Future numeral & semantic validation
+├── data/
+│   ├── annotations/           # Ground-truth benchmark annotations
+│   ├── templates/             # Form layout JSON specifications
+│   └── samples/               # Form image samples
+├── scripts/
+│   ├── verify_preprocess.py   # Live preprocessing test script
+│   ├── verify_segmentation.py # Live layout segmentation test script
+│   ├── verify_recognition.py  # Live OCR engine test script
+│   └── run_benchmarks.py      # Benchmark evaluation harness CLI
 ├── tests/
-│   ├── __init__.py
 │   ├── conftest.py            # Test fixtures & diagnostic routes
 │   ├── test_config.py         # Settings & environment safety tests
 │   ├── test_cors.py           # CORS headers & origin restriction tests
 │   ├── test_docs.py           # /docs and /openapi.json availability tests
-│   ├── test_errors.py         # 400, 404, 405, 422, 500 error envelope tests
-│   └── test_health.py         # Health check endpoint tests
+│   ├── test_errors.py         # Error envelope tests
+│   ├── test_health.py         # Health check endpoint tests
+│   ├── test_preprocessing.py  # Preprocessing unit & API tests
+│   ├── test_segmentation.py   # Segmentation unit & API tests
+│   └── test_recognition.py    # OCR adapters, evaluation metrics & API tests
 ├── .env.example               # Documented template for local development
 ├── pyproject.toml             # Pytest configuration and project metadata
 ├── README.md                  # Backend guide (this document)
