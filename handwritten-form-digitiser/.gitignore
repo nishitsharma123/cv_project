@@ -1,0 +1,141 @@
+# ==============================================================================
+# Git Ignore Configuration: Handwritten Indic-Script Form Digitiser
+# ==============================================================================
+
+# --- Python & Bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# --- Virtual Environments ---
+venv/
+.venv/
+env/
+.env/
+ENV/
+env.bak/
+venv.bak/
+pythonenv/
+
+# --- Testing & Type Checking ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# --- Node.js & Frontend ---
+frontend/node_modules/
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- Environment Variables & Secrets ---
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.cert
+credentials.json
+token.json
+
+# --- Model Weights, Checkpoints & Artifacts ---
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+*.h5
+*.hdf5
+*.ckpt
+*.tflite
+*.pb
+models/weights/
+checkpoints/
+artifacts/
+
+# --- Local Databases & Persistence ---
+*.db
+*.sqlite
+*.sqlite3
+instance/
+backend/app/database/*.db
+backend/app/database/*.sqlite3
+
+# --- Uploaded & Generated Form Data / Debug Artifacts ---
+# Allow tracking empty directories via .gitkeep
+backend/data/samples/*
+!backend/data/samples/.gitkeep
+backend/data/annotations/*
+!backend/data/annotations/.gitkeep
+backend/data/processed/*
+!backend/data/processed/.gitkeep
+
+# User document uploads, temp files, debug visualisations
+uploads/
+temp/
+tmp/
+debug_output/
+*.pdf
+*.tiff
+*.tif
+
+# --- OS & Editor Specific Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
