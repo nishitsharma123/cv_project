@@ -1,0 +1,36 @@
+# ==============================================================================
+# Backend Dependencies: Handwritten Indic-Script Form Digitiser
+# Phase 01: FastAPI Backend Foundation
+# ==============================================================================
+
+# Web Framework & ASGI Server
+fastapi>=0.115.0,<1.0.0
+uvicorn[standard]>=0.30.0,<1.0.0
+
+# Settings & Data Validation
+pydantic>=2.8.0,<3.0.0
+pydantic-settings>=2.4.0,<3.0.0
+python-dotenv>=1.0.0,<2.0.0
+
+# HTTP Client (Testing & External APIs)
+httpx>=0.27.0,<1.0.0
+
+# Testing Framework
+pytest>=8.0.0,<10.0.0
+pytest-asyncio>=0.23.0,<2.0.0
+
+# ==============================================================================
+# Upcoming Phase Dependencies (Commented out until respective phases)
+# ==============================================================================
+# Phase 03 & 04 (Image Preprocessing & Field Segmentation):
+# opencv-python>=4.10.0
+# numpy>=1.26.0
+
+# Phase 05 (Devanagari Recognition / OCR):
+# torch>=2.2.0
+# torchvision>=0.17.0
+
+# Phase 07 (Persistence Layer):
+# sqlalchemy>=2.0.0
+# aiosqlite>=0.20.0
+# alembic>=1.13.0
