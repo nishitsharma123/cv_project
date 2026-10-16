@@ -338,3 +338,151 @@ Accepts a form image upload, preprocesses, segments field crops according to the
   "timestamp": "2026-10-16T16:20:00Z"
 }
 ```
+
+---
+
+### 2.6 Field Validation & Review Flags (Phase 05)
+
+#### `POST /api/v1/validate`
+Validates an entire set of extracted fields against strict semantic domain rules, calendar constraints, numerical checks, and calibrated confidence thresholds. Emits review flags and explicit warning codes while guaranteeing that the raw OCR text is never modified or discarded.
+
+- **Content-Type:** `application/json`
+- **Request Body:**
+```json
+{
+  "template_id": "devanagari_synthetic_v1",
+  "engine_id": "crnn",
+  "fields": {
+    "applicant_name": {
+      "field_id": "applicant_name",
+      "field_type": "NAME",
+      "raw_text": "राकेश कुमार शर्मा",
+      "confidence": 0.95,
+      "is_confidence_calibrated": true
+    },
+    "submission_date": {
+      "field_id": "submission_date",
+      "field_type": "DATE",
+      "raw_text": "१५/०८/२०२४",
+      "confidence": 0.95,
+      "is_confidence_calibrated": true
+    },
+    "declared_amount": {
+      "field_id": "declared_amount",
+      "field_type": "AMOUNT",
+      "raw_text": "२५,०००",
+      "confidence": 0.95,
+      "is_confidence_calibrated": true
+    }
+  }
+}
+```
+
+- **Response `200 OK`**:
+```json
+{
+  "success": true,
+  "data": {
+    "template_id": "devanagari_synthetic_v1",
+    "engine_id": "crnn",
+    "total_fields": 3,
+    "valid_fields": 3,
+    "review_required_fields": 0,
+    "document_requires_review": false,
+    "warnings": [],
+    "fields": {
+      "applicant_name": {
+        "field_id": "applicant_name",
+        "field_type": "NAME",
+        "raw_text": "राकेश कुमार शर्मा",
+        "normalized_text": "राकेश कुमार शर्मा",
+        "validation_status": "VALID",
+        "requires_review": false,
+        "review_reasons": [],
+        "warning_codes": [],
+        "confidence": 0.95,
+        "is_confidence_calibrated": true,
+        "bounding_box": null,
+        "parsed_value": "राकेश कुमार शर्मा"
+      },
+      "submission_date": {
+        "field_id": "submission_date",
+        "field_type": "DATE",
+        "raw_text": "१५/०८/२०२४",
+        "normalized_text": "15/08/2024",
+        "validation_status": "VALID",
+        "requires_review": false,
+        "review_reasons": [],
+        "warning_codes": [],
+        "confidence": 0.95,
+        "is_confidence_calibrated": true,
+        "bounding_box": null,
+        "parsed_value": {
+          "iso": "2024-08-15",
+          "display": "15/08/2024",
+          "year": 2024,
+          "month": 8,
+          "day": 15
+        }
+      },
+      "declared_amount": {
+        "field_id": "declared_amount",
+        "field_type": "AMOUNT",
+        "raw_text": "२५,०००",
+        "normalized_text": "25000.00",
+        "validation_status": "VALID",
+        "requires_review": false,
+        "review_reasons": [],
+        "warning_codes": [],
+        "confidence": 0.95,
+        "is_confidence_calibrated": true,
+        "bounding_box": null,
+        "parsed_value": 25000.0
+      }
+    }
+  },
+  "timestamp": "2026-10-16T16:38:00Z"
+}
+```
+
+#### `POST /api/v1/validate/field`
+Validates an individual field in isolation.
+
+- **Content-Type:** `application/json`
+- **Request Body:**
+```json
+{
+  "field_id": "declared_amount",
+  "field_type": "AMOUNT",
+  "raw_text": "25O00",
+  "confidence": 0.90,
+  "is_confidence_calibrated": true
+}
+```
+
+- **Response `200 OK`**:
+```json
+{
+  "success": true,
+  "data": {
+    "field_id": "declared_amount",
+    "field_type": "AMOUNT",
+    "raw_text": "25O00",
+    "normalized_text": null,
+    "validation_status": "INVALID",
+    "requires_review": true,
+    "review_reasons": [
+      "Amount contains unexpected alphabetic characters: O. Detected possible OCR confusion between letter 'O' and digit '0'."
+    ],
+    "warning_codes": [
+      "ALPHABETIC_IN_NUMERIC"
+    ],
+    "confidence": 0.9,
+    "is_confidence_calibrated": true,
+    "bounding_box": null,
+    "parsed_value": null
+  },
+  "timestamp": "2026-10-16T16:38:00Z"
+}
+```
+

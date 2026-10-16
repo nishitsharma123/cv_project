@@ -89,10 +89,14 @@ python -m pytest tests/ -v
 # Run OCR and benchmark tests
 python -m pytest tests/test_recognition.py -v
 
+# Run field validation and review rule tests
+python -m pytest tests/test_validation.py -v
+
 # Run live verification scripts (spawns background uvicorn test instances)
 python scripts/verify_preprocess.py
 python scripts/verify_segmentation.py
 python scripts/verify_recognition.py
+python scripts/verify_validation.py
 
 # Run benchmark evaluation CLI
 python scripts/run_benchmarks.py --engine tesseract
@@ -109,7 +113,8 @@ backend/
 │   │   ├── health.py          # GET /api/health and GET /api/v1/health
 │   │   ├── preprocessing.py   # POST /api/preprocess
 │   │   ├── segmentation.py    # POST /api/segment, GET /api/templates
-│   │   └── recognition.py     # POST /api/recognize, GET /api/recognize/engines
+│   │   ├── recognition.py     # POST /api/recognize, GET /api/recognize/engines
+│   │   └── validation.py      # POST /api/validate, POST /api/validate/field
 │   ├── core/
 │   │   ├── config.py          # Pydantic Settings & environment validation
 │   │   ├── errors.py          # Domain exceptions & centralized error handlers
@@ -119,14 +124,16 @@ backend/
 │   │   ├── health.py          # Health check response schemas
 │   │   ├── preprocessing.py   # Image upload & preprocessing schemas
 │   │   ├── segmentation.py    # Field detection & layout schemas
-│   │   └── recognition.py     # OCR results & capability schemas
+│   │   ├── recognition.py     # OCR results & capability schemas
+│   │   └── validation.py      # Semantic validation & review schemas
 │   ├── main.py                # create_app() application factory & ASGI app
 │   ├── evaluation/            # CER, WER, and exact match benchmark metrics
 │   ├── pipeline/              # Future pipeline orchestrator
 │   ├── preprocessing/         # OpenCV deskew, CLAHE, bilateral filter
 │   ├── recognition/           # OCR engine adapters (Mock, Tesseract, CRNN)
 │   ├── segmentation/          # TemplateManager & layout strategies
-│   └── validation/            # Future numeral & semantic validation
+│   └── validation/            # Field validators (Name, Date, Amount) & service
+│       └── validators/        # BaseFieldValidator, Name, Date, Amount
 ├── data/
 │   ├── annotations/           # Ground-truth benchmark annotations
 │   ├── templates/             # Form layout JSON specifications
@@ -135,6 +142,7 @@ backend/
 │   ├── verify_preprocess.py   # Live preprocessing test script
 │   ├── verify_segmentation.py # Live layout segmentation test script
 │   ├── verify_recognition.py  # Live OCR engine test script
+│   ├── verify_validation.py   # Live validation test script
 │   └── run_benchmarks.py      # Benchmark evaluation harness CLI
 ├── tests/
 │   ├── conftest.py            # Test fixtures & diagnostic routes
@@ -145,7 +153,8 @@ backend/
 │   ├── test_health.py         # Health check endpoint tests
 │   ├── test_preprocessing.py  # Preprocessing unit & API tests
 │   ├── test_segmentation.py   # Segmentation unit & API tests
-│   └── test_recognition.py    # OCR adapters, evaluation metrics & API tests
+│   ├── test_recognition.py    # OCR adapters, evaluation metrics & API tests
+│   └── test_validation.py     # Semantic field validation & review tests
 ├── .env.example               # Documented template for local development
 ├── pyproject.toml             # Pytest configuration and project metadata
 ├── README.md                  # Backend guide (this document)

@@ -99,6 +99,37 @@ class Settings(BaseSettings):
         description="List of supported image file extension formats",
     )
 
+    # Phase 05: Field-Specific Validation & Review Configuration
+    NAME_MIN_CONFIDENCE: float = Field(
+        default=0.70,
+        description="Minimum calibrated confidence for NAME fields before triggering review",
+    )
+    DATE_MIN_CONFIDENCE: float = Field(
+        default=0.75,
+        description="Minimum calibrated confidence for DATE fields before triggering review",
+    )
+    AMOUNT_MIN_CONFIDENCE: float = Field(
+        default=0.75,
+        description="Minimum calibrated confidence for AMOUNT fields before triggering review",
+    )
+    DATE_ALLOWED_FORMATS: List[str] = Field(
+        default=["DD/MM/YYYY", "DD-MM-YYYY", "DD.MM.YYYY", "YYYY-MM-DD", "DD/MM/YY"],
+        description="Accepted date string formats for validation",
+    )
+    AMOUNT_ALLOW_DECIMAL: bool = Field(
+        default=True,
+        description="Whether decimal amounts are accepted",
+    )
+    AMOUNT_MAX_DECIMALS: int = Field(
+        default=2,
+        description="Maximum permitted fractional digits for currency amounts",
+    )
+    REQUIRE_REVIEW_ON_UNAVAILABLE_CONFIDENCE: bool = Field(
+        default=True,
+        description="Flag field for review when engine confidence is not calibrated or unavailable",
+    )
+
+
     @field_validator("ALLOWED_ORIGINS", mode="after")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
