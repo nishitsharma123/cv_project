@@ -22,9 +22,9 @@ pytest-asyncio>=0.23.0,<2.0.0
 # ==============================================================================
 # Upcoming Phase Dependencies (Commented out until respective phases)
 # ==============================================================================
-# Phase 03 & 04 (Image Preprocessing & Field Segmentation):
-# opencv-python>=4.10.0
-# numpy>=1.26.0
+# Image Processing & Computer Vision (Phase 02)
+opencv-python-headless>=4.10.0
+numpy>=1.26.0
 
 # Phase 05 (Devanagari Recognition / OCR):
 # torch>=2.2.0

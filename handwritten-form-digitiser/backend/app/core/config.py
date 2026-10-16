@@ -77,10 +77,26 @@ class Settings(BaseSettings):
         description="Log output formatting style",
     )
 
-    # Upload Constraints (for future image ingestion)
+    # Upload & Image Constraints
     MAX_UPLOAD_SIZE_MB: int = Field(
         default=15,
         description="Maximum allowed image upload size in megabytes",
+    )
+    MIN_IMAGE_DIMENSION: int = Field(
+        default=100,
+        description="Minimum allowed image width and height in pixels",
+    )
+    MAX_IMAGE_DIMENSION: int = Field(
+        default=8000,
+        description="Maximum allowed image width and height in pixels (decompression bomb protection)",
+    )
+    MAX_PREVIEW_DIMENSION: int = Field(
+        default=800,
+        description="Maximum dimension for downscaled preview representations",
+    )
+    SUPPORTED_IMAGE_FORMATS: List[str] = Field(
+        default=["JPEG", "JPG", "PNG"],
+        description="List of supported image file extension formats",
     )
 
     @field_validator("ALLOWED_ORIGINS", mode="after")
