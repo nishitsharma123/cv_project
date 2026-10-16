@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.health import router as health_router
 from app.api.preprocessing import router as preprocessing_router
+from app.api.segmentation import router as segmentation_router
 from app.core.config import Settings, get_settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import RequestLoggingMiddleware, setup_logging
@@ -63,14 +64,16 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     register_exception_handlers(app)
 
     # Mount API routers
-    # 1. Mount health and preprocessing routers under /api (e.g. GET /api/health, POST /api/preprocess)
+    # 1. Mount routers under /api (e.g. GET /api/health, POST /api/preprocess, POST /api/segment)
     app.include_router(health_router, prefix="/api")
     app.include_router(preprocessing_router, prefix="/api")
+    app.include_router(segmentation_router, prefix="/api")
 
     # 2. Mount routers under versioned prefix (e.g. /api/v1) for API contract compliance
     if settings.API_V1_STR != "/api":
         app.include_router(health_router, prefix=settings.API_V1_STR)
         app.include_router(preprocessing_router, prefix=settings.API_V1_STR)
+        app.include_router(segmentation_router, prefix=settings.API_V1_STR)
 
     return app
 

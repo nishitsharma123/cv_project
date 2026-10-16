@@ -1,0 +1,44 @@
+{
+  "template_id": "devanagari_synthetic_v1",
+  "name": "Devanagari Standard Three-Field Form (Synthetic Development Fixture)",
+  "version": "1.0.0",
+  "description": "Synthetic development template fixture containing three primary fields: applicant_name, submission_date, and declared_amount. Coordinates are normalized [norm_x1, norm_y1, norm_x2, norm_y2] in range [0.0, 1.0].",
+  "canonical_width": 800,
+  "canonical_height": 1000,
+  "aspect_ratio": 0.8,
+  "fields": [
+    {
+      "field_id": "applicant_name",
+      "field_name": "Applicant Name",
+      "field_type": "NAME",
+      "normalized_box": [0.10, 0.22, 0.85, 0.32],
+      "required": true,
+      "description": "Handwritten applicant full name in Devanagari script",
+      "padding_px": 6,
+      "expected_aspect_ratio_min": 3.0,
+      "expected_aspect_ratio_max": 10.0
+    },
+    {
+      "field_id": "submission_date",
+      "field_name": "Submission Date",
+      "field_type": "DATE",
+      "normalized_box": [0.55, 0.38, 0.90, 0.48],
+      "required": true,
+      "description": "Handwritten date in DD/MM/YYYY format in Devanagari or Arabic digits",
+      "padding_px": 6,
+      "expected_aspect_ratio_min": 1.5,
+      "expected_aspect_ratio_max": 5.0
+    },
+    {
+      "field_id": "declared_amount",
+      "field_name": "Declared Amount",
+      "field_type": "AMOUNT",
+      "normalized_box": [0.10, 0.54, 0.60, 0.64],
+      "required": true,
+      "description": "Handwritten monetary figure in Devanagari or Arabic numerals",
+      "padding_px": 6,
+      "expected_aspect_ratio_min": 2.0,
+      "expected_aspect_ratio_max": 7.0
+    }
+  ]
+}
